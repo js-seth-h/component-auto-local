@@ -1,4 +1,5 @@
 fs = require 'fs'
+path = require 'path'
 async = require 'async'
 debug = require('debug')('component-auto-local')
 
@@ -22,6 +23,20 @@ cleansingLocals = ()->
 saveJson = (jsonPath, cb)->
   fs.writeFile jsonPath, JSON.stringify(ComponentJson, null, 2), cb
 
+
+getSubDirs = (dir, callback)->
+  fs.readdir dir, (err, paths)->
+    return callback err if err
+    # debug 'result = ', paths
+    # files.map (file)-> return path.join dir, file
+    async.filter paths, (pathname, callback)-> 
+      relPath = path.join dir, pathname 
+      fs.stat relPath, (err, stats)->
+        callback stats.isDirectory()
+    , (result)->
+      # debug 'result = ', result
+      callback null, result
+
 auto = ( done)->
   jsonPath = auto.option.componentJson
   # json = require './' + file
@@ -32,8 +47,8 @@ auto = ( done)->
       ComponentJson.locals = [] unless ComponentJson.locals 
       debug 'original local =', ComponentJson.locals 
       if ComponentJson.paths
-
-        async.map ComponentJson.paths, fs.readdir, (err, result)->
+        async.map ComponentJson.paths, getSubDirs, (err, result)-> 
+          # debug 'result = ', result
           return done err if err
           localDirs = result.reduce (a, b) ->  a.concat(b)
           localDirs = localDirs.filter (item)-> 
