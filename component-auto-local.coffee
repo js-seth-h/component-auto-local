@@ -11,9 +11,8 @@ removeNotExist = ()->
     unless loDir in localDirs
       ComponentJson.locals[inx] = null
 
-
 appendNew = ()->
-  for loDir in localDirs
+  for loDir in localDirs  
     unless loDir in ComponentJson.locals
       ComponentJson.locals.push loDir
 
@@ -24,27 +23,40 @@ saveJson = (jsonPath, cb)->
   fs.writeFile jsonPath, JSON.stringify(ComponentJson, null, 2), cb
 
 auto = (jsonPath, done)->
+
   # json = require './' + file
   fs.readFile jsonPath, (err, data)->
     return done(err) if err
     try
       ComponentJson = JSON.parse(data);
       ComponentJson.locals = [] unless ComponentJson.locals 
+      debug 'original local =', ComponentJson.locals 
       if ComponentJson.paths
+
         async.map ComponentJson.paths, fs.readdir, (err, result)->
-          debug 'err', err
+          return done err if err
           localDirs = result.reduce (a, b) ->  a.concat(b)
-          debug 'localDirs ', localDirs 
+          localDirs = localDirs.filter (item)-> 
+            return item[0] isnt auto.option.ignorePrefix 
+          debug 'found local dirs =', localDirs 
 
           removeNotExist()
-          appendNew()
           cleansingLocals()
+          debug 'after removing not exist local =',  ComponentJson.locals 
+
+          appendNew()
+          debug 'after appending new local =',  ComponentJson.locals 
           saveJson jsonPath, (err)->
+            debug 'save `component.json`'
             done(err)
 
 
     catch err
       return done(err)
+
+auto.option =  
+  ignorePrefix: '!'
+
 
 
 

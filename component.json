@@ -8,8 +8,7 @@
     "test"
   ],
   "locals": [
-    "login",
-    "!not-include",
-    "include"
+    "include",
+    "login"
   ]
 }
