@@ -1,7 +1,7 @@
 {
   "name": "component-auto-local",
-  "version": "0.0.0",
-  "description": "Updating `locals` of `component.json` in `path`",
+  "version": "0.0.2",
+  "description": "Updating `locals` of `component.json` in `paths`",
   "main": "component-auto-local.js",
   "scripts": {
     "build": "coffee -c -b component-auto-local.coffee",
