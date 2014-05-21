@@ -22,8 +22,8 @@ cleansingLocals = ()->
 saveJson = (jsonPath, cb)->
   fs.writeFile jsonPath, JSON.stringify(ComponentJson, null, 2), cb
 
-auto = (jsonPath, done)->
-
+auto = ( done)->
+  jsonPath = auto.option.componentJson
   # json = require './' + file
   fs.readFile jsonPath, (err, data)->
     return done(err) if err
@@ -56,6 +56,7 @@ auto = (jsonPath, done)->
 
 auto.option =  
   ignorePrefix: '!'
+  componentJson : './component.json'
 
 
 

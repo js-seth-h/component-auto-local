@@ -2,5 +2,7 @@
 
 locals = require './component-auto-local'
 
-locals './component.json', (err)->
+locals.option.componentJson = './component.json'  # it's default value
+locals.option.ignorePrefix = '!'                  # it's default value
+locals  (err)->
   console.log 'END', err
