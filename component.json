@@ -1,0 +1,15 @@
+{
+  "name": "test",
+  "dependencies": {
+    "visionmedia/node-querystring": "*",
+    "visionmedia/debug": "*"
+  },
+  "paths": [
+    "test"
+  ],
+  "locals": [
+    "login",
+    "!not-include",
+    "include"
+  ]
+}

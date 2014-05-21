@@ -1,0 +1,28 @@
+{
+  "name": "component-auto-local",
+  "version": "0.0.0",
+  "description": "Updating `locals` of `component.json` in `path`",
+  "main": "component-auto-local.js",
+  "scripts": {
+    "build": "coffee -c -b component-auto-local.coffee",
+    "test": "coffee test.coffee"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/js-seth-h/component-auto-local.git"
+  },
+  "keywords": [
+    "component",
+    "local"
+  ],
+  "author": "js.seth.h@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/js-seth-h/component-auto-local/issues"
+  },
+  "homepage": "https://github.com/js-seth-h/component-auto-local",
+  "dependencies": {
+    "async": "^0.9.0",
+    "debug": "^0.8.1"
+  }
+}
