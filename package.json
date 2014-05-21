@@ -1,11 +1,12 @@
 {
   "name": "component-auto-local",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Updating `locals` of `component.json` in `paths`",
   "main": "component-auto-local.js",
   "scripts": {
     "build": "coffee -c -b component-auto-local.coffee",
-    "test": "coffee test.coffee"
+    "test": "coffee test.coffee",
+    "prepublish": "npm run-script build"
   },
   "repository": {
     "type": "git",
