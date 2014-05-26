@@ -1,0 +1,27 @@
+{
+  "name": "login",
+  "scripts": [
+    "*.coffee"
+  ],
+  "styles": [
+    "*.less"
+  ],
+  "templates": [
+    "*.html"
+  ],
+  "static": {
+    "/login": "./public"
+  },
+  "dependencies": {
+    "visionmedia/node-querystring": "*",
+    "visionmedia/debug": "*"
+  },
+  "paths": [
+    "..\\..\\..\\component.json"
+  ],
+  "locals": [
+    "boot",
+    "include",
+    "login"
+  ]
+}

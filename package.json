@@ -6,7 +6,8 @@
   "scripts": {
     "build": "coffee -c -b component-auto-local.coffee",
     "test": "coffee test.coffee",
-    "prepublish": "npm run-script build"
+    "prepublish": "npm run-script build",
+    "postpublish": "rm *.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,8 @@
   "homepage": "https://github.com/js-seth-h/component-auto-local",
   "dependencies": {
     "async": "^0.9.0",
-    "debug": "^0.8.1"
+    "debug": "^0.8.1",
+    "glob": "^4.0.0",
+    "handover": "^0.4.0"
   }
 }

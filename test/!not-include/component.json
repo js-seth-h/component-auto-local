@@ -1,0 +1,17 @@
+{
+  "name": "not-include",
+ 
+  "scripts": [
+    "*.coffee"
+  ],
+  "styles": [
+    "*.less"
+  ],
+  "templates": [
+    "*.html"
+  ],
+
+  "static": {
+    "/login": "./public"
+  }
+}
