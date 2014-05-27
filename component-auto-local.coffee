@@ -1,6 +1,6 @@
 fs = require 'fs'
 path = require 'path'
-async = require 'async'
+# async = require 'async'
 debug = require('debug')('component-auto-local')
 glob = require 'glob'
 ho = require 'handover'
@@ -109,7 +109,8 @@ retriveLocalsJon = (ctx, next)->
     jsonPattern = path.join dir, "*/Component.json"
     glob jsonPattern, callback
   debug 'paths = ', ctx.RootJson.paths 
-  async.map ctx.RootJson.paths, getLocalComponents, (err, result)-> 
+  # async.map ctx.RootJson.paths, getLocalComponents, (err, result)-> 
+  (ho.map getLocalComponents) ctx.RootJson.paths, (err, result)-> 
     # debug 'localjson ' , err, result
     return next err if err
     localDirs = result.reduce (a, b) ->  a.concat(b)
@@ -122,7 +123,8 @@ loadLocalJson = (ctx, next)->
   # f = ho [ loadJson ]
   # contexts = ctx.localJsonPath.map (el)-> return {path : el}
   # f.parallel contexts, (err, results)->
-  async.map ctx.localJsonPath, loadJson, (err, results)->
+  # async.map ctx.localJsonPath, loadJson, (err, results)->
+  (ho.map loadJson) ctx.localJsonPath, (err, results)->
     debug 'loadLocalJson', err, results
     ctx.json = {}
     ctx.locals = []
@@ -180,19 +182,30 @@ spreadDependancy = (ctx, next)->
       paths.push rel
     value.paths = paths
     value.locals = ctx.locals.filter (el)-> el isnt name
+    debug 'localjson ', key, name, value
   next()
 
 saveAll = (ctx, next)->
   jsonPath = auto.option.componentJson
   fs.writeFile jsonPath, JSON.stringify(ctx.RootJson, null, 2), (err)->
     return next err if err 
-    for own key, value of ctx.json
-      fs.writeFile key, JSON.stringify(value, null, 2), (err)-> 
+
+    saveJson = (filepath, jsonDef, done)->
+      debug 'saveJson', filepath, jsonDef
+      fs.writeFile filepath, JSON.stringify(jsonDef, null, 2), done
+
+    (ho.map saveJson) ctx.json, (err, results)->
+      debug 'saveLocalJSON', err, results
+      return next err if err
+      next()
+
+    # for own key, value of ctx.json
+    #   fs.writeFile key, JSON.stringify(value, null, 2), (err)-> 
 
 print = (ctx,next)->
   debug 'ctx = ', ctx
   next()
-  
+
 auto = (done)->
   debug 'auto start'
   # json = require './' + file
@@ -215,8 +228,9 @@ auto = (done)->
   ]
 
   f {}, (err, ctx)-> 
-    debug 'err', err
-    debug 'ctx', ctx
+    console.log "DONE!!!"
+    # debug 'err', err
+    # debug 'ctx', ctx
 
 
 auto.option =  
