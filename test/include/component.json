@@ -17,11 +17,11 @@
     "visionmedia/debug": "*"
   },
   "paths": [
-    "..\\..\\..\\component.json"
+    "../boot",
+    "../login"
   ],
   "locals": [
     "boot",
-    "include",
     "login"
   ]
 }

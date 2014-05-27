@@ -178,11 +178,22 @@ updateLocals = (ctx, done)->
   #   done(err)
 
 spreadDependancy = (ctx, next)->
+  debug 'spreadDependancy'
+
   for own key, value of ctx.json
     value.dependencies = ctx.RootJson.dependencies
-    rel = path.relative key, auto.option.componentJson
-    value.paths = [ rel ]
-    value.locals = ctx.locals
+    name = value.name
+    paths = []
+    localDir = path.dirname key
+    for own key2, v of ctx.json
+      otherDir = path.dirname key2
+      continue if localDir is otherDir
+      rel = path.relative localDir, otherDir
+      rel = rel.split(path.sep).join '/'
+      debug 'rel', rel, localDir, '->', otherDir
+      paths.push rel
+    value.paths = paths
+    value.locals = ctx.locals.filter (el)-> el isnt name
   next()
 
 saveAll = (ctx, next)->
@@ -190,7 +201,7 @@ saveAll = (ctx, next)->
   fs.writeFile jsonPath, JSON.stringify(ctx.RootJson, null, 2), (err)->
     return next err if err 
     for own key, value of ctx.json
-      fs.writeFile key, JSON.stringify(value, null, 2), 
+      fs.writeFile key, JSON.stringify(value, null, 2), (err)-> 
 
 print = (ctx,next)->
   debug 'ctx = ', ctx
@@ -223,6 +234,6 @@ auto = (done)->
 
 auto.option =  
   ignorePrefix: '!'
-  componentJson : './component.json'
+  componentJson : 'component.json'
 
 module.exports = auto
