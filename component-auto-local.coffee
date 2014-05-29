@@ -22,8 +22,13 @@ loadRootJson = (ctx, next)->
     next()
 retriveLocalsJon = (ctx, next)-> 
   getLocalComponents = (dir, callback)->
-    jsonPattern = path.join dir, "*/Component.json"
-    glob jsonPattern, callback
+    directPath = path.join dir, "Component.json"
+    fs.exists directPath, (exist)->
+      if exist
+        callback null, [directPath]
+      else
+        jsonPattern = path.join dir, "*/Component.json"
+        glob jsonPattern, callback
   debug 'paths = ', ctx.RootJson.paths  
   (ho.map getLocalComponents) ctx.RootJson.paths, (err, result)-> 
     # debug 'localjson ' , err, result
@@ -33,7 +38,10 @@ retriveLocalsJon = (ctx, next)->
       name = path.basename path.dirname item
       return name[0] isnt auto.option.ignorePrefix 
     debug 'found localJsonPath =', ctx.localJsonPath 
+    if ctx.localJsonPath.length is 0
+      return next new Error "no local modules"
     next()
+
 loadLocalJson = (ctx, next)-> 
   (ho.map loadJson) ctx.localJsonPath, (err, results)->
     debug 'loadLocalJson', err, results
@@ -98,6 +106,11 @@ saveAll = (ctx, next)->
     return next err if err 
 
     saveJson = (filepath, jsonDef, done)->
+
+
+      return done() if -1 <  filepath.indexOf 'node_modules/'
+      return done() if -1 < filepath.indexOf 'components/' 
+
       debug 'saveJson', filepath, jsonDef
       fs.writeFile filepath, JSON.stringify(jsonDef, null, 2), done
 

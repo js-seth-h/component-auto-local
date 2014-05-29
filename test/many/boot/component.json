@@ -1,7 +1,8 @@
 {
-  "name": "include",
+  "name": "boot",
   "scripts": [
-    "*.coffee"
+    "*.coffee",
+    "**/*.coffee"
   ],
   "styles": [
     "*.less"
@@ -10,17 +11,19 @@
     "*.html"
   ],
   "static": {
-    "/login": "./public"
+    "/boot": "./public"
   },
   "dependencies": {
     "visionmedia/node-querystring": "*",
     "visionmedia/debug": "*"
   },
   "paths": [
+    "../../one",
     ".."
   ],
   "locals": [
-    "boot",
+    "one",
+    "include",
     "login"
   ]
 }
