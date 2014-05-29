@@ -6,13 +6,14 @@
     "visionmedia/debug": "*"
   },
   "paths": [
-    "test/one",
-    "test/many"
+    "test"
   ],
   "locals": [
     "boot",
     "include",
     "login",
+    "T",
+    "N",
     "one"
   ]
 }

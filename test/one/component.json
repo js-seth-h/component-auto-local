@@ -18,12 +18,13 @@
     "visionmedia/debug": "*"
   },
   "paths": [
-    "",
-    "../many"
+    ".."
   ],
   "locals": [
     "boot",
+    "T",
     "include",
-    "login"
+    "login",
+    "N"
   ]
 }

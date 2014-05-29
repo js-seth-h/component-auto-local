@@ -22,13 +22,13 @@ loadRootJson = (ctx, next)->
     next()
 retriveLocalsJon = (ctx, next)-> 
   getLocalComponents = (dir, callback)->
-    directPath = path.join dir, "Component.json"
-    fs.exists directPath, (exist)->
-      if exist
-        callback null, [directPath]
-      else
-        jsonPattern = path.join dir, "*/Component.json"
-        glob jsonPattern, callback
+    # directPath = path.join dir, "Component.json"
+    # fs.exists directPath, (exist)->
+    #   if exist
+    #     callback null, [directPath]
+    #   else
+    jsonPattern = path.join dir, "*/Component.json"
+    glob jsonPattern, callback
   debug 'paths = ', ctx.RootJson.paths  
   (ho.map getLocalComponents) ctx.RootJson.paths, (err, result)-> 
     # debug 'localjson ' , err, result

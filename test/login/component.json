@@ -1,5 +1,5 @@
 {
-  "name": "include",
+  "name": "login",
   "scripts": [
     "*.coffee"
   ],
@@ -17,12 +17,13 @@
     "visionmedia/debug": "*"
   },
   "paths": [
-    "../../one",
     ".."
   ],
   "locals": [
-    "one",
     "boot",
-    "login"
+    "T",
+    "include",
+    "N",
+    "one"
   ]
 }
