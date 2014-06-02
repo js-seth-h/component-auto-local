@@ -49,8 +49,12 @@ loadLocalJson = (ctx, next)->
     ctx.locals = []
     results.map (item, inx)->
       pathname = ctx.localJsonPath[inx]
+      correctName = path.basename path.dirname pathname
+      debug 'LocalJson path & name = ', pathname, item.name , correctName
+      item.name = correctName
       ctx.json[pathname] = item
       ctx.locals.push item.name
+    debug 'loadedJson', ctx
     next()
 
 
@@ -106,10 +110,8 @@ saveAll = (ctx, next)->
     return next err if err 
 
     saveJson = (filepath, jsonDef, done)->
-
-
-      return done() if -1 <  filepath.indexOf 'node_modules/'
-      return done() if -1 < filepath.indexOf 'components/' 
+      # return done() if -1 <  filepath.indexOf 'node_modules/'
+      # return done() if -1 < filepath.indexOf 'components/' 
 
       debug 'saveJson', filepath, jsonDef
       fs.writeFile filepath, JSON.stringify(jsonDef, null, 2), done

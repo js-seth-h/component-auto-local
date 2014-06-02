@@ -6,14 +6,15 @@
     "visionmedia/debug": "*"
   },
   "paths": [
-    "test"
+    "test",
+    "."
   ],
   "locals": [
     "boot",
     "include",
     "login",
-    "T",
-    "N",
-    "one"
+    "one",
+    "components",
+    "node_modules"
   ]
 }

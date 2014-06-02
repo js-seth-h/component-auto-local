@@ -17,13 +17,14 @@
     "visionmedia/debug": "*"
   },
   "paths": [
-    ".."
+    "..",
+    "../.."
   ],
   "locals": [
     "boot",
-    "T",
+    "components",
     "login",
-    "N",
+    "node_modules",
     "one"
   ]
 }

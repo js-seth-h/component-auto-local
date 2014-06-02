@@ -18,13 +18,14 @@
     "visionmedia/debug": "*"
   },
   "paths": [
-    ".."
+    "..",
+    "../.."
   ],
   "locals": [
-    "T",
+    "components",
     "include",
     "login",
-    "N",
+    "node_modules",
     "one"
   ]
 }
