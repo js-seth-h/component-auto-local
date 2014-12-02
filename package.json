@@ -1,6 +1,6 @@
 {
   "name": "component-auto-local",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "description": "Updating `locals` of `component.json` in `paths`",
   "main": "component-auto-local.js",
   "scripts": {
@@ -25,7 +25,7 @@
   "homepage": "https://github.com/js-seth-h/component-auto-local",
   "dependencies": {
     "debug": "^0.8.1",
-    "glob": "^4.0.0",
-    "handover": "^0.4.3"
+    "ficent": "^0.2.3",
+    "glob": "^4.0.0"
   }
 }

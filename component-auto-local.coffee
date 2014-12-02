@@ -2,8 +2,9 @@ fs = require 'fs'
 path = require 'path' 
 debug = require('debug')('component-auto-local')
 glob = require 'glob'
-ho = require 'handover'
-  
+
+ficent = require 'ficent'
+
 loadJson = (jsonPath , next)-> 
   # jsonPath = auto.option.componentJson
   fs.readFile jsonPath, (err, data)->
@@ -20,30 +21,43 @@ loadRootJson = (ctx, next)->
   loadJson auto.option.componentJson, (err, json)->
     ctx.RootJson = json
     next()
+
 retriveLocalsJon = (ctx, next)-> 
-  getLocalComponents = (dir, callback)->
-    # directPath = path.join dir, "Component.json"
-    # fs.exists directPath, (exist)->
-    #   if exist
-    #     callback null, [directPath]
-    #   else
-    jsonPattern = path.join dir, "*/Component.json"
+
+  _getLocalComponents = (dir, callback)->
+    jsonPattern = path.join dir, "*/component.json"
     glob jsonPattern, callback
   debug 'paths = ', ctx.RootJson.paths  
-  (ho.map getLocalComponents) ctx.RootJson.paths, (err, result)-> 
-    # debug 'localjson ' , err, result
-    return next err if err
-    localDirs = result.reduce (a, b) ->  a.concat(b)
-    ctx.localJsonPath = localDirs.filter (item)-> 
+
+  fns = []
+  for p in ctx.RootJson.paths
+    do (p)->
+      fns.push (toss)-> _getLocalComponents p, toss
+
+  ficent.fork.do fns, (err, fpaths)->
+    debug 'fork back', arguments
+
+    dirs = fpaths.reduce (a,b)-> a.concat b
+    debug 'dirs ', dirs
+    ctx.localJsonPath = dirs.filter (item)-> 
       name = path.basename path.dirname item
       return name[0] isnt auto.option.ignorePrefix 
-    debug 'found localJsonPath =', ctx.localJsonPath 
+    debug 'ctx.localJsonPath', ctx.localJsonPath
     if ctx.localJsonPath.length is 0
       return next new Error "no local modules"
     next()
 
+
+  return
+
 loadLocalJson = (ctx, next)-> 
-  (ho.map loadJson) ctx.localJsonPath, (err, results)->
+  
+  fns = []
+  for p in ctx.localJsonPath
+    do (p)->
+      fns.push (toss)-> loadJson p, toss
+
+  ficent.fork.do fns, (err, results)->
     debug 'loadLocalJson', err, results
     ctx.json = {}
     ctx.locals = []
@@ -55,8 +69,7 @@ loadLocalJson = (ctx, next)->
       ctx.json[pathname] = item
       ctx.locals.push item.name
     debug 'loadedJson', ctx
-    next()
-
+    next() 
 
 
 updateLocals = (ctx, done)-> 
@@ -97,11 +110,12 @@ spreadDependancy = (ctx, next)->
       continue if localDir is otherDir
       rel = path.relative localDir, otherDir
       rel = rel.split(path.sep).join '/'
-      debug 'rel', rel, localDir, '->', otherDir
+      # debug 'rel', rel, localDir, '->', otherDir
       paths.push rel
     value.paths = paths
     value.locals = ctx.locals.filter (el)-> el isnt name
-    debug 'localjson ', key, name, value
+    debug 'localjson ', key, name
+    debug 're-defined JSON = ', JSON.stringify value, null, 2
   next()
 
 saveAll = (ctx, next)->
@@ -116,7 +130,15 @@ saveAll = (ctx, next)->
       debug 'saveJson', filepath, jsonDef
       fs.writeFile filepath, JSON.stringify(jsonDef, null, 2), done
 
-    (ho.map saveJson) ctx.json, (err, results)->
+
+    debug 'ctx.json = ', JSON.stringify ctx.json, null, 2
+    fns = []
+    for own fpath, json of ctx.json
+      do (fpath, json)->
+        fns.push (toss)-> saveJson fpath, json, toss
+
+    ficent.fork.do fns, (err, results)-> 
+    # (ho.map saveJson) ctx.json, (err, results)->
       debug 'saveLocalJSON', err, results
       return next err if err
       next() 
@@ -127,7 +149,7 @@ print = (ctx,next)->
 
 auto = (done)->
   debug 'auto start'  
-  f = ho [
+  f = ficent [
     loadRootJson
     retriveLocalsJon
     loadLocalJson

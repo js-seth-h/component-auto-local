@@ -1,4 +1,4 @@
-
+process.env.DEBUG = "*"
 
 locals = require './component-auto-local'
 

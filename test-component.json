@@ -11,10 +11,10 @@
   ],
   "locals": [
     "boot",
+    "components",
     "include",
     "login",
-    "one",
-    "components",
-    "node_modules"
+    "node_modules",
+    "one"
   ]
 }
