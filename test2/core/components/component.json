@@ -1,0 +1,16 @@
+{
+  "name": "components",
+  "dependencies": {
+    "visionmedia/node-querystring": "*",
+    "visionmedia/debug": "*"
+  },
+  "paths": [
+    ".."
+  ],
+  "locals": [
+    "boot",
+    "include",
+    "login",
+    "one"
+  ]
+}

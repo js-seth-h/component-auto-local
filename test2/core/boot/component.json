@@ -1,0 +1,29 @@
+{
+  "name": "boot",
+  "scripts": [
+    "*.coffee",
+    "**/*.coffee"
+  ],
+  "styles": [
+    "*.less"
+  ],
+  "templates": [
+    "*.html"
+  ],
+  "static": {
+    "/boot": "./public"
+  },
+  "dependencies": {
+    "visionmedia/node-querystring": "*",
+    "visionmedia/debug": "*"
+  },
+  "paths": [
+    ".."
+  ],
+  "locals": [
+    "components",
+    "include",
+    "login",
+    "one"
+  ]
+}

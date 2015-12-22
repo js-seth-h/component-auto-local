@@ -19,6 +19,7 @@ loadJson = (jsonPath , next)->
 
 loadRootJson = (ctx, next)->
   loadJson auto.option.componentJson, (err, json)->
+    ctx.RootDir = path.dirname auto.option.componentJson
     ctx.RootJson = json
     next()
 
@@ -26,15 +27,25 @@ retriveLocalsJon = (ctx, next)->
 
   _getLocalComponents = (dir, callback)->
     jsonPattern = path.join dir, "*/component.json"
+    debug 'search local component.json with', jsonPattern
     glob jsonPattern, callback
-  debug 'paths = ', ctx.RootJson.paths  
+  debug 'ctx.RootDir =', ctx.RootDir  
+  debug 'ctx.RootJson.paths =', ctx.RootJson.paths  
 
-  fns = []
-  for p in ctx.RootJson.paths
-    do (p)->
-      fns.push (toss)-> _getLocalComponents p, toss
+  # fns = []
+  # for p in ctx.RootJson.paths
+  #   do (p)->
+  #     p = path.join ctx.RootDir, p 
+  #     fns.push (toss)-> _getLocalComponents p, toss
 
-  ficent.fork.do fns, (err, fpaths)->
+
+  _fn = ficent.par (p, _toss)->
+    p = path.join ctx.RootDir, p  
+    _getLocalComponents p, _toss
+
+
+
+  _fn ctx.RootJson.paths, (err, fpaths)->
     debug 'fork back', arguments
 
     dirs = fpaths.reduce (a,b)-> a.concat b
@@ -52,12 +63,14 @@ retriveLocalsJon = (ctx, next)->
 
 loadLocalJson = (ctx, next)-> 
   
-  fns = []
-  for p in ctx.localJsonPath
-    do (p)->
-      fns.push (toss)-> loadJson p, toss
+  # fns = []
+  # for p in ctx.localJsonPath
+  #   do (p)->
+  #     fns.push (toss)-> loadJson p, toss
+  _fn = ficent.par (p, _toss)->
+    loadJson p, _toss
 
-  ficent.fork.do fns, (err, results)->
+  _fn ctx.localJsonPath, (err, results)->
     debug 'loadLocalJson', err, results
     ctx.json = {}
     ctx.locals = []
@@ -105,9 +118,15 @@ spreadDependancy = (ctx, next)->
     name = value.name
     paths = []
     localDir = path.dirname key
-    for otherDir  in ctx.RootJson.paths
+    for otherDir in ctx.RootJson.paths
+
+      otherDir = path.join ctx.RootDir, otherDir
       # otherDir = path.dirname key2
-      continue if localDir is otherDir
+
+      # ctx.RootDir = path.dirname auto.option.componentJson
+      debug 'spreadDependancy', localDir, otherDir
+      continue if path.normalize(localDir) is path.normalize(otherDir)
+
       rel = path.relative localDir, otherDir
       rel = rel.split(path.sep).join '/'
       # debug 'rel', rel, localDir, '->', otherDir
@@ -132,12 +151,22 @@ saveAll = (ctx, next)->
 
 
     debug 'ctx.json = ', JSON.stringify ctx.json, null, 2
-    fns = []
-    for own fpath, json of ctx.json
-      do (fpath, json)->
-        fns.push (toss)-> saveJson fpath, json, toss
+    # fns = []
+    # for own fpath, json of ctx.json
+    #   do (fpath, json)->
+    #     fns.push (toss)-> saveJson fpath, json, toss
 
-    ficent.fork.do fns, (err, results)-> 
+
+
+    par_args = []
+    for own fpath, json of ctx.json
+      par_args.push [fpath, json]
+
+
+    _fn = ficent.par (fpath, json, toss)-> 
+      saveJson fpath, json, toss
+
+    _fn par_args, (err, results)->
     # (ho.map saveJson) ctx.json, (err, results)->
       debug 'saveLocalJSON', err, results
       return next err if err
@@ -162,7 +191,7 @@ auto = (done)->
 
   f {}, (err, ctx)-> 
     debug "DONE!!!"
-    done()
+    done err
 
 auto.option =  
   ignorePrefix: '!'
