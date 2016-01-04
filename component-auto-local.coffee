@@ -48,14 +48,15 @@ retriveLocalsJon = (ctx, next)->
   _fn ctx.RootJson.paths, (err, fpaths)->
     debug 'fork back', arguments
 
-    dirs = fpaths.reduce (a,b)-> a.concat b
+
+    dirs = fpaths.reduce ((a,b)-> a.concat b), []
     debug 'dirs ', dirs
     ctx.localJsonPath = dirs.filter (item)-> 
       name = path.basename path.dirname item
       return name[0] isnt auto.option.ignorePrefix 
     debug 'ctx.localJsonPath', ctx.localJsonPath
-    if ctx.localJsonPath.length is 0
-      return next new Error "no local modules"
+    # if ctx.localJsonPath.length is 0
+    #   return next new Error "no local modules"
     next()
 
 
