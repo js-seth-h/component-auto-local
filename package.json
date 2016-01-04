@@ -1,6 +1,6 @@
 {
   "name": "component-auto-local",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Updating `locals` of `component.json` in `paths`",
   "main": "component-auto-local.js",
   "scripts": {
