@@ -21,6 +21,9 @@ loadRootJson = (ctx, next)->
   loadJson auto.option.componentJson, (err, json)->
     ctx.RootDir = path.dirname auto.option.componentJson
     ctx.RootJson = json
+    ctx.RootJson.name = path.basename ctx.RootDir
+    # debug 'ctx.RootDir', ctx.RootDir, 
+    debug 'ctx.RootJson', json
     next()
 
 retriveLocalsJon = (ctx, next)-> 
